@@ -1,19 +1,35 @@
 pipeline {
-    agent {
-        label 'electronix'
-    }
+    agent { label 'electronix' }
 
     stages {
-        stage("I am from Electronix") {
+        stage('Hello') {
             steps {
-                echo "Hello from Electronix"
+                echo 'Hello from Electronix'
             }
         }
 
-        stage("Electronix Setup") {
+        stage('Setup') {
             steps {
-                echo "Electronix Setup is working ✅"
+                echo 'Electronix Setup is working'
             }
+        }
+    }
+
+    post {
+        success {
+            mail(
+                to: 'ms2500287@gmail.com',
+                subject: "SUCCESS: ${env.JOB_NAME}",
+                body: "Build Successful\n${env.BUILD_URL}"
+            )
+        }
+
+        failure {
+            mail(
+                to: 'ms2500287@gmail.com',
+                subject: "FAILED: ${env.JOB_NAME}",
+                body: "Build Failed\n${env.BUILD_URL}"
+            )
         }
     }
 }
