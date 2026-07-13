@@ -9,5 +9,12 @@ pipeline {
                 echo 'Tool Installation Pipeline'
             }
         }
+        stage("List Update"){
+            steps {
+                sh '''
+                sudo apt-get update -y
+                '''
+            }
+        }
     }
 }
