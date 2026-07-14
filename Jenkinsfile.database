@@ -3,9 +3,9 @@ pipeline{
 
     stages{
         stage('Creating Datebase')
-        steps{
-            sh 'python3 scripts/create_db.py'
-        }
+            steps{
+                sh 'python3 scripts/create_db.py'
+            }
     }
 
     post{
