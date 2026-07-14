@@ -1,5 +1,5 @@
 pipeline{
-    agent { label 'electronic' }
+    agent { label 'electronix' }
 
     stages{
         stage('Creating Database'){
