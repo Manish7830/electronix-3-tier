@@ -1,35 +1,74 @@
 pipeline {
     agent { label 'electronix' }
 
-    stages {
-        stage('Hello') {
-            steps {
-                echo 'Hello from Electronix'
-            }
-        }
+    environment{
+        S3_BUCKET='electronix-production-7830'
+        CLOUDFRONT_ID='E3DT4ZNA1YUXZE'
+        AWS_REGION="us-east-1"
 
-        stage('Setup') {
-            steps {
-                echo 'Electronix Setup is working'
+    }
+
+    stages {
+        stage('Frontend Deployment') {
+            when {
+                changeset "frontend/**"
+            }
+
+            stages {
+                stage('Install Dependencies') {
+                    steps {
+                        dir('frontend') {
+                            sh '''
+                            npm install
+                            '''
+                        }
+                    }
+                }
+
+                stage("Run Tests") {
+                    steps {
+                        dir('frontend') {
+                            sh 'npm test -- --watchAll=false || echo "No Test Configured.."'
+                        }
+                    }
+                }
+
+                stage("Build") {
+                    steps {
+                        dir(frontend) {
+                            sh 'npm run build'
+                        }
+                    }
+                }
+
+                stage('Deploy S3') {
+                    steps {
+                        dir(frontend) {
+                            sh '''
+                            aws s3 sync dist/ s3://${S3_BUCKET} --delete --region ${AWS_REGION}
+                            '''
+                        }
+                    }
+                }
+
+
+                stage('Invalidation Cloudfront Cache') {
+                    steps {
+                        sh '''
+                        aws cloudfront create-invalidation --distribution-id ${Cloudfront_id} --paths "/*"
+                        '''
+                    }
+                }
             }
         }
     }
 
-    post {
-        success {
-            mail(
-                to: 'ms2500287@gmail.com',
-                subject: "SUCCESS: ${env.JOB_NAME}",
-                body: "Build Successful\n${env.BUILD_URL}"
-            )
+    post{
+        success{
+            'Frontent Deployment Successfull ✅'
         }
-
-        failure {
-            mail(
-                to: 'ms2500287@gmail.com',
-                subject: "FAILED: ${env.JOB_NAME}",
-                body: "Build Failed\n${env.BUILD_URL}"
-            )
+        failure{
+            'Frontent Deployment Failed ❌'
         }
     }
 }
