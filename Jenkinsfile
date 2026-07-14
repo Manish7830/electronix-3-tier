@@ -4,8 +4,7 @@ pipeline {
     environment{
         S3_BUCKET='electronix-production-7830'
         CLOUDFRONT_ID='E3DT4ZNA1YUXZE'
-        AWS_REGION="us-east-1"
-
+        AWS_REGION='us-east-1'
     }
 
     stages {
@@ -35,7 +34,7 @@ pipeline {
 
                 stage("Build") {
                     steps {
-                        dir(frontend) {
+                        dir('frontend') {
                             sh 'npm run build'
                         }
                     }
@@ -43,19 +42,17 @@ pipeline {
 
                 stage('Deploy S3') {
                     steps {
-                        dir(frontend) {
+                        dir('frontend') {
                             sh '''
                             aws s3 sync dist/ s3://${S3_BUCKET} --delete --region ${AWS_REGION}
                             '''
                         }
                     }
                 }
-
-
-                stage('Invalidation Cloudfront Cache') {
-                    steps {
-                        sh '''
-                        aws cloudfront create-invalidation --distribution-id ${Cloudfront_id} --paths "/*"
+                stage('Invalidation Cloudfront Cache'){
+                    steps{
+                        sh'''
+                        aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_ID} --paths "/*"
                         '''
                     }
                 }
@@ -65,10 +62,11 @@ pipeline {
 
     post{
         success{
-            'Frontent Deployment Successfull ✅'
+            echo 'Frontend Deployment Successfull ✅'
         }
+
         failure{
-            'Frontent Deployment Failed ❌'
+            echo 'Frontend Deployment Failed ❌'
         }
     }
 }
