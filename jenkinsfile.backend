@@ -1,29 +1,30 @@
-pipeline{
-    agent {label 'electronix'}
-
-    environment {
-        ECR_REPO='875285643684.dkr.ecr.us-east-1.amazonaws.com/electronix-ecr'
-        AWS_REGION = "us-east-1"
+pipeline {
+    agent {
+        label 'electronix'
     }
 
-    stages{
-        stage("Test ECR Login"){
-            steps{
-                sh '''
-                aws ecr get-login-password --region ${AWS_REGION} | docker login --username.login --AWS --password-stdin ${ECR_EPO}
-                '''
+    environment {
+        ECR_REPO   = '875285643684.dkr.ecr.us-east-1.amazonaws.com/electronix-ecr'
+        AWS_REGION = 'us-east-1'
+    }
 
+    stages {
+        stage('Test ECR Login') {
+            steps {
+                sh '''
+                aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
+                '''
             }
         }
     }
 
-    POST {
-        success{
-            echo "ECR login success ✅"
+    post {
+        success {
+            echo 'ECR login success ✅'
         }
 
-        failure{
-            echo "ECR login failed ❌"
+        failure {
+            echo 'ECR login failed ❌'
         }
     }
 }
