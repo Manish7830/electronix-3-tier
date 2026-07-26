@@ -43,11 +43,10 @@ pipeline {
             }
         }
 
-        stage('Tag and Push Docker image') {
+        stage('Connect to Production Server') {
             steps {
                 sh '''
-                ssh -o StrictHostKeyChecking=no ubuntu@${PRODUCTION_IP}
-                echo "Connection Sussess ✅
+                ssh -o StrictHostKeyChecking=no ubuntu@${PRODUCTION_IP} "echo Connection Success ✅"
                 '''
             }
         }
