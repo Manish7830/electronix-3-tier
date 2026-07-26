@@ -42,6 +42,15 @@ pipeline {
                 '''
             }
         }
+
+        stage('Tag and Push Docker image') {
+            steps {
+                sh '''
+                ssh -o StrictHostKeyChecking=no ubuntu@${PRODUCTION_IP}
+                echo "Connection Sussess ✅
+                '''
+            }
+        }
     }
 
     post {
