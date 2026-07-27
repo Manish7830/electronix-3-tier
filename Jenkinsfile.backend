@@ -70,7 +70,7 @@ pipeline {
                 }
                 stage('Health Check'){
                     steps{
-                        sh "sleep 10 && curl -f http://${PRODUCTION_IP}:5000/api/health || exit 1"
+                        sh 'sleep 10 && curl -f http://${PRODUCTION_IP}:5000/api/health || exit 1'
                     }
                 }
 
