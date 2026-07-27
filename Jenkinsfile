@@ -9,9 +9,6 @@ pipeline {
 
     stages {
         stage('Frontend Deployment') {
-            when {
-                changeset "frontend/**"
-            }
 
             stages {
                 stage('Install Dependencies') {
